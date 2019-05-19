@@ -1,3 +1,25 @@
+
+// function to make markersize dynamic based on value given (i.e. magnitude)
+function markerSize(magnitude) {
+    return magnitude * 2;
+};
+
+// function to make markersize dynamic based on value given (i.e. magnitude)
+function Color(magnitude) {
+    if (magnitude > 5) {
+        return 'red'
+    } else if (magnitude > 4) {
+        return 'orange'
+    } else if (magnitude > 3) {
+        return 'yellow'
+    } else if (magnitude > 2) {
+        return 'green'
+    } else {
+        return 'lightgreen'
+    }
+};
+
+
 // Function to run once for each feature in the features array
 function createFeatures(eqData) {
 
@@ -7,29 +29,24 @@ function createFeatures(eqData) {
         "</h3><hr><h4>" + new Date(feature.properties.time) + 
         "</h4><hr><h4> Magnitude: " + feature.properties.mag + "</h4>");
     }
-       
-    // let mag;
-    // function onEachFeature(feature, layer) {
-    //     let mag = feature.properties.mag
-    
-    //     let markerCircle = {
-    //         radius: feature.properties.mag,
-    //         fillColor: "#ff7800",
-    //         color: "#000",
-    //         weight: 1,
-    //         opacity: 1,
-    //         fillOpacity: 0.8
-    //     };
-    // }
     
 
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
     const earthquakes = L.geoJSON(eqData, {
-        onEachFeature: onEachFeature
-        // pointToLayer: function (feature, latlng) {
-        //     return L.circleMarker(latlng, markerCircle);
-        // }
+        // onEachFeature: onEachFeature
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, { radius: markerSize(feature.properties.mag) });
+        },
+        style: function (geoJsonFeature) {
+            return {
+                fillColor: Color(geoJsonFeature.properties.mag),
+                fillOpacity: 0.7,
+                weight: 0.1,
+                color: 'black'
+
+            }
+        },
     });
 
     // Sending our earthquakes layer to the createMap function
@@ -73,11 +90,38 @@ function createMap(earthquakes) {
 
 
     // Create a layer control
-    // Pass in our baseMaps and overlayMaps
-    // Add the layer control to the map
     L.control.layers(baseMaps, overlayMaps, {
             collapsed: false
     }).addTo(myMap);
+
+    
+
+    // Set up the legend
+    // const legend = L.control({ position: "bottomright" });
+    // legend.onAdd = function() {
+    //     const div = L.DomUtil.create("div", "info legend");
+    //     const limits = geojson.options.limits;
+    //     const colors = geojson.options.colors;
+
+    //     // Add min & max
+    //     const legendInfo = "<h1>Median Income</h1>" +
+    //     "<div class=\"labels\">" +
+    //     "<div class=\"min\">" + limits[0] + "</div>" +
+    //     "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
+    //     "</div>";
+
+    //     div.innerHTML = legendInfo;
+
+    //     const labels = limits.map((limit, index) => {
+    //         return "<li style=\"background-color: " + colors[index] + "\"></li>"
+    //     })
+
+    //     div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+    //     return div;
+    // };
+
+    // // Adding legend to the map
+    // legend.addTo(myMap);
 }
 
 
