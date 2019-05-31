@@ -13,6 +13,8 @@ function Color(magnitude) {
     } else if (magnitude > 3) {
         return 'yellow'
     } else if (magnitude > 2) {
+        return 'darkgreen'
+    } else if (magnitude > 1) {
         return 'green'
     } else {
         return 'lightgreen'
@@ -97,34 +99,29 @@ function createMap(earthquakes) {
     
 
     // Set up the legend
-    // const legend = L.control({ position: "bottomright" });
-    // legend.onAdd = function() {
-    //     const div = L.DomUtil.create("div", "info legend");
-    //     const limits = geojson.options.limits;
-    //     const colors = geojson.options.colors;
+    let legend = L.control({ position: 'bottomleft' });
 
-    //     // Add min & max
-    //     const legendInfo = "<h1>Median Income</h1>" +
-    //     "<div class=\"labels\">" +
-    //     "<div class=\"min\">" + limits[0] + "</div>" +
-    //     "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-    //     "</div>";
+    legend.onAdd = function () {
 
-    //     div.innerHTML = legendInfo;
+        let div = L
+                .DomUtil
+                .create('div', 'info legend'),
+            magnitude = [0, 1, 2, 3, 4, 5],
+            labels = [];
 
-    //     const labels = limits.map((limit, index) => {
-    //         return "<li style=\"background-color: " + colors[index] + "\"></li>"
-    //     })
+        div.innerHTML += "<h4 style='margin:4px'>Magnitude</h4>"
 
-    //     div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-    //     return div;
-    // };
+        for (let i = 0; i < magnitude.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + Color(magnitude[i] + 1) + '"></i>' +
+                magnitude[i] + (magnitude[i + 1] ? '&ndash;' + magnitude[i + 1] + '<br>' : '+');
+        }
 
-    // // Adding legend to the map
-    // legend.addTo(myMap);
+        return div;
+    };
+    legend.addTo(myMap);
+
 }
-
-
 
 
 // Perform an API call to the earthquakes API to get information. Call createMarkers when complete
